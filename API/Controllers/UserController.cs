@@ -8,6 +8,7 @@ using System.Security.Claims;
 using API.Extensions;
 using API.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
+using API.Helpers;
 namespace API;
 
 [ApiController]
@@ -17,9 +18,11 @@ IPhotoService photoService) : BaseApiController
 {
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
-        var users = await userRepository.GetMembersAsync();
+        var users = await userRepository.GetMembersAsync(userParams);
+
+        Response.AddPaginationheader(users);
 
         return Ok(users);
     }
