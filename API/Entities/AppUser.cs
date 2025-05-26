@@ -22,5 +22,8 @@ namespace DatingApp.API.Entities
 
         public List<UserLike> LikedBytheUsers { get; set; } = [];
         public List<UserLike> LikedUsers { get; set; } = [];
+
+        public List<Message> MessageSent { get; set; } = [];
+        public List<Message> MessagesReceived { get; set; } = [];
     }
 }
