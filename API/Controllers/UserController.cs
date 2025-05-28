@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using API.Interfaces;
 using API.DTOs;
 using AutoMapper;
-using System.Security.Claims;
 using API.Extensions;
 using API.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
 using API.Helpers;
 namespace API;
 
@@ -104,15 +102,16 @@ IPhotoService photoService) : BaseApiController
 
         if (photo == null || photo.IsMain) return BadRequest("Cant delete this photo");
 
-        if(photo.PublicId != null){
+        if (photo.PublicId != null)
+        {
             var result = await photoService.DeletePhotoAsync(photo.PublicId);
-            if(result.Error != null) return BadRequest(result.Error.Message);
+            if (result.Error != null) return BadRequest(result.Error.Message);
         }
 
-       user.Photos.Remove(photo);
+        user.Photos.Remove(photo);
 
-       if (await userRepository.SaveAllAsync()) return Ok();
+        if (await userRepository.SaveAllAsync()) return Ok();
 
-     return BadRequest("Problem in deleting photo");
+        return BadRequest("Problem in deleting photo");
     }
 }

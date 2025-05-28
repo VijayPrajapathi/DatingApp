@@ -1,6 +1,11 @@
 using System;
 using System.Text;
+using API.Entities;
+using CloudinaryDotNet.Actions;
+using DatingApp.API.Data;
+using DatingApp.API.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Extensions;
@@ -9,6 +14,28 @@ public static class IdentityServiceExtension
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
     {
+
+        services.AddIdentityCore<AppUser>(op =>
+        {
+            op.Password.RequireNonAlphanumeric = false;
+            op.Password.RequireUppercase = false;
+            op.Password.RequireLowercase = false;
+        })
+        .AddRoles<AppRole>()
+        .AddRoleManager<RoleManager<AppRole>>()
+        .AddEntityFrameworkStores<DataContext>()
+        ;
+
+        services.AddAuthorizationBuilder().
+        AddPolicy("RequireAdminRole", policy =>
+        {
+            policy.RequireRole("Admin");
+        })
+        .AddPolicy("RequireModeratorRole", policy =>
+        {
+            policy.RequireRole("Moderator");
+        });
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
